@@ -3,6 +3,8 @@ import Repositorio.*;
 
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 //  FALTA 5.a.b.c.d.e
@@ -147,5 +149,39 @@ public class Main {
         EmpresaRepo.save(empresa2);
         System.out.println(" -----------Guardamos las empresas----------");
 
+        List<Empresa> listaEmpresas=EmpresaRepo.findAll();
+        listaEmpresas.forEach(empresa->System.out.println(empresa));
+        System.out.println(" -----------a) Mostramos las empresas----------");
+
+        Optional<Empresa> encontrarEmpresa = EmpresaRepo.findById(2L);
+        encontrarEmpresa.ifPresent(e->System.out.println("Empresa de ID 2: "+e));
+        System.out.println(" -----------b) Encontramos empresa por ID----------");
+
+        List<Empresa> nombreEmpresa = EmpresaRepo.genericFindByField("nombre","Empresa 1");
+        System.out.println("Empresas con nombre Empresa 1: ");
+        nombreEmpresa.forEach(empresa->System.out.println(empresa));
+        System.out.println(" -----------c) Buscamos empresa por nombre----------");
+
+        Empresa actualizacionEmpresa = Empresa.builder()
+                        .id(1L)
+                        .nombre("Empresa 3")
+                        .razonSocial("GASVER SA")
+                        .cuit((int) 20431194687L)
+                        .sucursales(empresa1.getSucursales())
+                        .build();
+        EmpresaRepo.genericUpdate(1L, actualizacionEmpresa);
+        Optional<Empresa> empresaModificada = EmpresaRepo.findById(1L);
+        empresaModificada.ifPresent(empresa->System.out.println("Se actualizó a "+empresa));
+        System.out.println(" -----------d) Actualizamos datos de una empresa por ID----------");
+
+        EmpresaRepo.genericDelete(1L);
+        Optional<Empresa> empresaBorrada = EmpresaRepo.findById(1L);
+        if(empresaBorrada.isEmpty()) {
+            System.out.println("La empresa fue eliminada");
+        }
+        System.out.println("Las empresas restantes son: ");
+        List<Empresa> empresasRestantes = EmpresaRepo.findAll();
+        empresasRestantes.forEach(empresa->System.out.println(empresa));
+        System.out.println(" -----------e) Eliminamos empresa con ID----------");
     }
 }
